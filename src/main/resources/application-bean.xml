@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config />
+
+    <bean id="propertyPlaceholderConfigurer" class="it.tai.alfresco.utils.SpringPropertiesUtils">
+        <property name="locations">
+            <list>
+                <value>classpath:conf.properties</value>
+                <value>file:${conf}</value>
+            </list>
+        </property>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="ignoreUnresolvablePlaceholders" value="false"/>
+    </bean>
+
+    <bean id="restUtils" class="it.tool.rest.alfresco.client.AlfrescoRestUtils" init-method="init">
+        <property name="user" value="${alfresco.user}"/>
+        <property name="password" value="${alfresco.password}"/>
+        <property name="alfrescoContextUrl" value="${alfresco.url}"/>
+    </bean>
+
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.host}"/>
+        <property name="port" value="${mail.port}"/>
+        <property name="username" value="${mail.username}"/>
+        <property name="password" value="${mail.password}"/>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">${mail.protocol}</prop>
+                <prop key="mail.smtp.auth">${mail.auth}</prop>
+                <prop key="mail.smtp.starttls.enable">${mail.tls}</prop>
+                <prop key="mail.debug">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="mailUtils" class="it.tai.alfresco.utils.MailUtils">
+        <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+</beans>
